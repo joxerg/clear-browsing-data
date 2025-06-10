@@ -358,6 +358,13 @@ function addStartupListener() {
   browser.runtime.onStartup.addListener(onStartup);
 }
 
+async function clearOnBrowserStart() {
+  const options = await storage.get(optionKeys);
+  if (options.clearOnBrowserStart) {
+    await clearDataType('allDataTypes');
+  }
+}
+
 async function setupUI() {
   await queue.add(setBrowserAction);
 }
@@ -376,6 +383,8 @@ async function setup({event = ''} = {}) {
       }
     });
   }
+
+  await clearOnBrowserStart();
 
   if (startup.setupSession) {
     await runOnce('setupSession', async () => {
